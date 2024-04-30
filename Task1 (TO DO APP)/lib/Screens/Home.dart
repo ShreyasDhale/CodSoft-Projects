@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:to_do_app/Config/FirestoreHelper.dart';
 import 'package:to_do_app/Config/NotificationHelper.dart';
-import 'package:to_do_app/Constants/Constants.dart';
+import 'package:to_do_app/Globals/Constants.dart';
 import 'package:to_do_app/PhoneAuth/Signup.dart';
 
 class HomePage extends StatefulWidget {

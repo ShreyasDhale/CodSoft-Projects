@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:to_do_app/Constants/Constants.dart';
+import 'package:to_do_app/Globals/Constants.dart';
 
 class FirestoreHelper {
   static getTasks() {}
