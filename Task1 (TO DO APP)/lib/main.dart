@@ -1,15 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do_app/Config/NotificationHelper.dart';
+import 'package:to_do_app/Config/SQLHelper.dart';
 import 'package:to_do_app/Screens/SplashScreen.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   NotificationHelper.initilize();
+  await SQLHelper.db();
   runApp(const MyApp());
 }
 

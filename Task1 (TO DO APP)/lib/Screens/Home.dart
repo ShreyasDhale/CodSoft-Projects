@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:to_do_app/Config/FirestoreHelper.dart';
 import 'package:to_do_app/Config/NotificationHelper.dart';
+import 'package:to_do_app/Config/SQLHelper.dart';
 import 'package:to_do_app/Globals/Constants.dart';
-import 'package:to_do_app/PhoneAuth/Signup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,8 +12,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String userPhone = "";
-  FirestoreHelper db = FirestoreHelper();
+  Map<String, dynamic> user = {};
+  int noOfTasks = 0;
   TextEditingController dateController = TextEditingController();
   TextEditingController timeController = TextEditingController();
   TextEditingController eventController = TextEditingController();
@@ -24,7 +21,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    setCurrentPhone();
+    getUser();
+  }
+
+  Future<void> getUser() async {
+    var name = await SQLHelper.getCurrentUser();
+    var data = await SQLHelper.getTasks(null);
+    int tasks = data.length;
+    setState(() {
+      user = name;
+      noOfTasks = tasks;
+    });
   }
 
   Future<void> selectTime(BuildContext context) async {
@@ -75,99 +82,78 @@ class _HomePageState extends State<HomePage> {
     return combinedDateTime;
   }
 
-  void setCurrentPhone() async {
-    if (currentUser != null) {
-      DocumentSnapshot snap = await users.doc(currentUser!.uid).get();
-      Map<String, dynamic> data = snap.data() as Map<String, dynamic>;
-      setState(() {
-        userPhone = data["Phone"];
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Welcome \n+91 $userPhone"),
-        backgroundColor: Colors.deepPurple,
-        titleTextStyle:
-            titleStyle.copyWith(color: appBarForegroundColor, fontSize: 18),
-        actionsIconTheme: IconThemeData(color: appBarForegroundColor),
+        title: Text(
+          "Welcome",
+          style: headLineStyle.copyWith(color: Colors.grey, fontSize: 20),
+        ),
+        iconTheme: const IconThemeData(color: Colors.grey),
         actions: [
           IconButton(
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignupUser()),
-                    (route) => false);
-              },
-              icon: const Icon(Icons.logout))
+              onPressed: () {},
+              icon: const Icon(
+                Icons.search,
+                color: Colors.grey,
+              )),
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.notifications_on_outlined,
+                color: Colors.grey,
+              ))
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: Text(
+                "Logout",
+                style: titleStyle,
+              ),
+              onTap: () {
+                SQLHelper.logout(user['id'], context);
+              },
+            )
+          ],
+        ),
       ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        child: StreamBuilder(
-            stream: tasks.snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.active) {
-                if (snapshot.hasData && snapshot.data != null) {
-                  print("Found Tasks");
-                  return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> data = snapshot.data!.docs[index]
-                            .data() as Map<String, dynamic>;
-                        return Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10.0, right: 10, left: 10),
-                          child: ListTile(
-                            tileColor: Colors.black.withOpacity(0.5),
-                            title: Text(data['task'],
-                                style:
-                                    titleStyle.copyWith(color: Colors.white)),
-                            subtitle: Text(
-                                "date : " +
-                                    data['date'] +
-                                    "\nTime : " +
-                                    data['time'],
-                                style:
-                                    titleStyle.copyWith(color: Colors.white70)),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        );
-                      });
-                } else {
-                  print("No Tasks!");
-                  return Center(
-                      child: Text(
-                    "No Tasks",
-                    style: headLineStyle.copyWith(color: Colors.black),
-                  ));
-                }
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                print("Connection state is waiting!");
-                return const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.black,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Text(
+                    "Hello ${user['name']}",
+                    style: headLineStyle.copyWith(
+                        color: Colors.black,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
                   ),
-                );
-              } else {
-                print("Connection state is not active!");
-                return Center(
-                  child: Text("No data !!", style: headLineStyle),
-                );
-              }
-            }),
+                ],
+              ),
+              Row(
+                children: [
+                  Text(
+                    "$noOfTasks tasks pending",
+                    style: headLineStyle.copyWith(
+                        color: Colors.grey,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -270,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                         ElevatedButton(
                           onPressed: () async {
                             try {
-                              int id = await db.getLastNotificationId();
+                              // int id = await db.getLastNotificationId();
                               DateTime dateObject =
                                   DateFormat('EEEE , d-MMMM-y')
                                       .parse(dateController.text);
@@ -278,17 +264,17 @@ class _HomePageState extends State<HomePage> {
                                   timeController.text, dateObject);
                               Navigator.pop(context);
                               NotificationHelper.sendNotification(
-                                  notId: id,
+                                  notId: 0,
                                   title: eventController.text,
                                   body: dateController.text,
                                   notificationDateTime: hr);
-                              db.createTask(
-                                  eventController.text.trim(),
-                                  dateController.text.trim(),
-                                  timeController.text.trim(),
-                                  context);
+                              // db.createTask(
+                              //     eventController.text.trim(),
+                              //     dateController.text.trim(),
+                              //     timeController.text.trim(),
+                              //     context);
                             } on Exception catch (e) {
-                              db.showSnackBar(e.toString(), context);
+                              // db.showSnackBar(e.toString(), context);
                               print(e.toString());
                             }
                           },
