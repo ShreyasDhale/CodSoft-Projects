@@ -11,6 +11,7 @@ Widget customTextfield({
   bool keepBorder = true,
   bool enabled = true,
   bool multiLine = true,
+  double borderRadius = 10,
   Widget leading = const SizedBox(),
   Widget trailing = const SizedBox(),
 }) {
@@ -32,7 +33,7 @@ Widget customTextfield({
         border: keepBorder
             ? OutlineInputBorder(
                 borderSide: BorderSide(color: borderColor, width: 1),
-                borderRadius: BorderRadius.circular(10))
+                borderRadius: BorderRadius.circular(borderRadius))
             : null),
   );
 }

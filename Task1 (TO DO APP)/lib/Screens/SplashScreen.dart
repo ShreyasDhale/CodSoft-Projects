@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:to_do_app/Config/SQLHelper.dart';
+import 'package:to_do_app/Globals/Variables.dart';
 import 'package:to_do_app/Screens/GetUserDetails.dart';
 import 'package:to_do_app/Screens/Home.dart';
 import 'package:to_do_app/Screens/ListUsers.dart';
@@ -27,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
           context,
           MaterialPageRoute(builder: (context) => const GetUser()),
           (route) => false);
-    } else if (await SQLHelper.isUserLogedin()) {
+    } else if (currentUser != {}) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),

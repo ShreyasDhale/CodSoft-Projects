@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_app/Config/NotificationHelper.dart';
 import 'package:to_do_app/Config/SQLHelper.dart';
+import 'package:to_do_app/Globals/Variables.dart';
 import 'package:to_do_app/Screens/SplashScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  NotificationHelper.initilize();
-  await SQLHelper.db();
+  currentUser = await SQLHelper.getCurrentUser();
+  NotificationHelper.initilize(refresh: null);
+  int length = await SQLHelper.getOverdueCount();
+  if (length != 0) {
+    NotificationHelper.sendNotificationsNow(
+        50000, "You have $length Overdues", "Complete Now");
+  }
   runApp(const MyApp());
 }
 

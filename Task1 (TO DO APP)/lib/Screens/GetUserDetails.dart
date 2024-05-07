@@ -88,10 +88,8 @@ class _GetUserState extends State<GetUser> {
                 text: "Continue",
                 onTap: () async {
                   String name = nameController.text.trim();
-                  int id = await SQLHelper.createUser(name);
-                  setState(() {
-                    currentUserId = id;
-                  });
+                  await SQLHelper.createUser(name);
+                  currentUser = await SQLHelper.getCurrentUser();
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => const HomePage()),

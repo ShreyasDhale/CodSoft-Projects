@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_app/Config/SQLHelper.dart';
 import 'package:to_do_app/Globals/Constants.dart';
+import 'package:to_do_app/Globals/Variables.dart';
 import 'package:to_do_app/Screens/GetUserDetails.dart';
 
 class UsersAvailable extends StatefulWidget {
@@ -101,24 +102,6 @@ class _UsersAvailableState extends State<UsersAvailable> {
   }
 }
 
-List<Color> colors = [
-  Colors.red,
-  Colors.blue,
-  Colors.deepPurple,
-  Colors.yellow,
-  Colors.green,
-];
-
-List<int> shuffledIndices = [];
-
-int getIndex(int max) {
-  if (shuffledIndices.isEmpty) {
-    shuffledIndices = List<int>.generate(max, (index) => index);
-    shuffledIndices.shuffle();
-  }
-  return shuffledIndices.removeLast();
-}
-
 class AVATAR extends StatelessWidget {
   final String name;
   final int id;
@@ -133,8 +116,9 @@ class AVATAR extends StatelessWidget {
       child: Column(
         children: [
           InkWell(
-            onTap: () {
+            onTap: () async {
               SQLHelper.login(id, context);
+              currentUser = await SQLHelper.getCurrentUser();
             },
             child: CircleAvatar(
               backgroundColor: colors[getIndex(colors.length)],
@@ -148,24 +132,19 @@ class AVATAR extends StatelessWidget {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                name,
-                style: titleStyle,
-              ),
-              IconButton(
-                  onPressed: () {
-                    SQLHelper.deleteUser(id);
-                    refresh();
-                  },
-                  icon: const Icon(
-                    Icons.delete,
-                    color: Colors.red,
-                  ))
-            ],
+          Text(
+            name,
+            style: titleStyle,
           ),
+          IconButton(
+              onPressed: () {
+                SQLHelper.deleteUser(id);
+                refresh();
+              },
+              icon: const Icon(
+                Icons.delete,
+                color: Colors.red,
+              ))
         ],
       ),
     );

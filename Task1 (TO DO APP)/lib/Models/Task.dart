@@ -4,20 +4,21 @@ class Task {
   final String ddate;
   final String dtime;
   String type;
-  final int notId;
-  final int overdue;
-  final int fav;
+  String repeteType;
+  int notId;
+  int overdue;
+  int fav;
 
-  Task({
-    required this.id,
-    required this.task,
-    required this.ddate,
-    required this.dtime,
-    this.type = "Default[All]",
-    required this.notId,
-    required this.overdue,
-    required this.fav,
-  });
+  Task(
+      {required this.id,
+      required this.task,
+      required this.ddate,
+      required this.dtime,
+      required this.type,
+      this.notId = 0,
+      this.overdue = 0,
+      this.fav = 0,
+      this.repeteType = "None(once)"});
 
   Map<String, dynamic> toMap() {
     return {
@@ -26,9 +27,6 @@ class Task {
       'ddate': ddate,
       'dtime': dtime,
       'type': type,
-      'notId': notId,
-      'overdue': overdue,
-      'fav': fav,
     };
   }
 
@@ -40,7 +38,9 @@ class Task {
       dtime: map['dtime'],
       notId: map['notId'],
       overdue: map['overdue'],
-      fav: map['fav'],
+      fav: map['fev'],
+      repeteType: map['repeteType'],
+      type: map['type'],
     );
   }
 }

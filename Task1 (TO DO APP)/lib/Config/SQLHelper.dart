@@ -3,31 +3,51 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart' as sql;
+import 'package:to_do_app/Config/NotificationHelper.dart';
 import 'package:to_do_app/Globals/Variables.dart';
+import 'package:to_do_app/Models/Task.dart';
 import 'package:to_do_app/Screens/Home.dart';
 import 'package:to_do_app/Screens/ListUsers.dart';
 
 class SQLHelper {
   static Future<void> createTables(sql.Database database) async {
-    Print("3");
     await database.execute("""create table tasks(
         id INTEGER primary key autoincrement NOT NULL,
         task TEXT,
         ddate TEXT,
         dtime TEXT DEFAULT NULL,
         type TEXT DEFAULT 'Default[All]',
-        notId INTEGER,
+        repeteType TEXT NOT NULL,
+        notId INTEGER NOT NULL,
         overdue int DEFAULT 0,
         fev int DEFAULT 0,
         userId int NOT NULL
       )""");
-    Print("4");
     await database.execute("""create table users(
         id INTEGER primary key autoincrement NOT NULL,
         name TEXT,
         isLogedin int DEFAULT 0
       );""");
-    Print("5");
+    await database.execute("""create table notify(
+        id INTEGER primary key NOT NULL,
+        notId int NOT NULL,
+        desc TEXT NOT NULL,
+        ddate TEXT NOT NULL,
+        dtime TEXT NOT NULL
+      );""");
+  }
+
+  static Future<sql.Database> db() async {
+    return sql.openDatabase('todolist', version: 1,
+        onCreate: (sql.Database database, int version) async {
+      await createTables(database);
+    });
+  }
+
+  static Future<int> getOverdueCount() async {
+    final db = await SQLHelper.db();
+    var data = await db.query("tasks", where: "overdue = ?", whereArgs: [1]);
+    return data.length;
   }
 
   static Future<bool> isUserNull() async {
@@ -53,15 +73,6 @@ class SQLHelper {
     }
   }
 
-  static Future<sql.Database> db() async {
-    Print("1");
-    return sql.openDatabase('todolist', version: 1,
-        onCreate: (sql.Database database, int version) async {
-      Print("2");
-      await createTables(database);
-    });
-  }
-
   static Future<int> createUser(String name) async {
     try {
       final db = await SQLHelper.db();
@@ -81,19 +92,25 @@ class SQLHelper {
     }
   }
 
-  static Future<int> createTask(
-      String desc, String date, String time, String type, int notId) async {
+  static Future<int> createTask(String desc, String date, String time,
+      String type, String repeteType) async {
     final db = await SQLHelper.db();
+    List<Map<String, dynamic>> result =
+        await db.rawQuery('SELECT MAX(notId) AS max_notId FROM tasks');
+    int? currNotId = result.first['max_notId'];
+    currNotId ??= 0;
     final data = {
       'task': desc,
       'ddate': date,
       'dtime': time,
       'type': type,
-      'notId': notId,
-      'userId': currentUserId,
+      'userId': currentUser['id'],
+      'notId': ++currNotId,
+      'repeteType': repeteType
     };
     final id = await db.insert('tasks', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
+    Print("Task $desc created Successfully !!");
     return id;
   }
 
@@ -110,49 +127,25 @@ class SQLHelper {
     }
   }
 
+  static Future<List<Map<String, Object?>>> getNotifications() async {
+    final db = await SQLHelper.db();
+    return await db.query("notify");
+  }
+
   static Future<void> deleteUser(int id) async {
     final db = await SQLHelper.db();
     await db.delete("users", where: "id = ?", whereArgs: [id]);
   }
 
-  static Future<int> updateTask(
-      int id, String desc, String date, String time, String type) async {
+  static Future<int> updateTask(int id, String desc, String date, String time,
+      String type, String repete) async {
     final db = await SQLHelper.db();
     final data = {
       'task': desc,
       'ddate': date,
       'dtime': time,
       'type': type,
-    };
-    final result =
-        await db.update('tasks', data, where: 'id = ?', whereArgs: [id]);
-    return result;
-  }
-
-  static Future<int> updateOverdue(int id, int overdue) async {
-    final db = await SQLHelper.db();
-    final data = {
-      'overdue': overdue,
-    };
-    final result =
-        await db.update('tasks', data, where: 'notId = ?', whereArgs: [id]);
-    return result;
-  }
-
-  static Future<int> updateOverduebyId(int id, int overdue) async {
-    final db = await SQLHelper.db();
-    final data = {
-      'overdue': overdue,
-    };
-    final result =
-        await db.update('tasks', data, where: 'id = ?', whereArgs: [id]);
-    return result;
-  }
-
-  static Future<int> updateFev(int id, int fev) async {
-    final db = await SQLHelper.db();
-    final data = {
-      'fev': fev,
+      'repeteType': repete,
     };
     final result =
         await db.update('tasks', data, where: 'id = ?', whereArgs: [id]);
@@ -166,61 +159,16 @@ class SQLHelper {
 
   static Future<List<Map<String, dynamic>>> getTasks(String? type) async {
     final db = await SQLHelper.db();
-    final data = ['id', 'task', 'ddate', 'dtime', 'notId', 'type', 'overdue'];
     if (type == null) {
       return await db.query('tasks',
-          columns: data, where: 'overdue = ?', whereArgs: [0], orderBy: 'id');
+          where: "userId = ?",
+          whereArgs: [currentUser['id']],
+          orderBy: "overdue");
     } else {
       return await db.query('tasks',
-          columns: data,
-          where: 'type = ? and overdue = ?',
-          whereArgs: [type, 0],
+          where: 'type = ? and userId = ?',
+          whereArgs: [type, currentUser['id']],
           orderBy: 'id');
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> getOverdues(String? type) async {
-    final db = await SQLHelper.db();
-    final data = ['id', 'task', 'ddate', 'dtime', 'notId', 'type', 'overdue'];
-    if (type == null) {
-      return await db.query('tasks',
-          columns: data, where: 'overdue = ?', whereArgs: [1], orderBy: 'id');
-    } else {
-      return await db.query('tasks',
-          columns: data,
-          where: 'type = ? and overdue = ?',
-          whereArgs: [type, 1],
-          orderBy: 'id');
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> getFev(String? type) async {
-    final db = await SQLHelper.db();
-    final data = ['id', 'task', 'ddate', 'dtime', 'notId', 'type', 'overdue'];
-    if (type == null) {
-      return await db.query('tasks',
-          columns: data, where: 'fev = ?', whereArgs: [1], orderBy: 'id');
-    } else {
-      return await db.query('tasks',
-          columns: data,
-          where: 'type = ? and fev = ?',
-          whereArgs: [type, 1],
-          orderBy: 'id');
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> search(
-      String str, String type) async {
-    final db = await SQLHelper.db();
-    if (type == 'overdue') {
-      return await db.query('tasks',
-          where: 'overdue = ? and task LIKE ?', whereArgs: [1, '%$str%']);
-    } else if (type == 'fev') {
-      return await db.query('tasks',
-          where: 'fev = ? and task LIKE ?', whereArgs: [1, '%$str%']);
-    } else {
-      return await db.query('tasks',
-          where: 'overdue = ? and task LIKE ?', whereArgs: [0, '%$str%']);
     }
   }
 
@@ -244,28 +192,13 @@ class SQLHelper {
         (route) => false);
   }
 
-  static Future<void> deletTask(int id) async {
-    final db = await SQLHelper.db();
-    try {
-      await db.delete('tasks', where: "id = ?", whereArgs: [id]);
-    } catch (err) {
-      debugPrint("Something went wrong : $err");
-    }
-  }
-
   static Future<void> completeTask(int id) async {
     final db = await SQLHelper.db();
     try {
-      await db.delete('tasks', where: "notId = ?", whereArgs: [id]);
-    } catch (err) {
-      debugPrint("Something went wrong : $err");
-    }
-  }
-
-  static Future<void> deletAllTasks() async {
-    final db = await SQLHelper.db();
-    try {
-      await db.delete('tasks');
+      final notId = await db.query("tasks", where: "id = ?", whereArgs: [id]);
+      Task task = Task.fromMap(notId.first);
+      await db.delete('tasks', where: "id = ?", whereArgs: [id]);
+      NotificationHelper.cancleNotification(task.notId);
     } catch (err) {
       debugPrint("Something went wrong : $err");
     }
