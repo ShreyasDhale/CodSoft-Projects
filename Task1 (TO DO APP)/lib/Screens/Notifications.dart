@@ -34,7 +34,7 @@ class NotificationsState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return loading
-        ? const CircularProgressIndicator()
+        ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : Scaffold(
             appBar: AppBar(
               title: Text(
@@ -52,7 +52,8 @@ class NotificationsState extends State<NotificationScreen> {
                               Notifications.fromMap(notifications[index]);
                           if (notifications.isNotEmpty) {
                             return Container(
-                              margin: const EdgeInsets.all(20),
+                              margin: const EdgeInsets.only(
+                                  top: 10, right: 20, left: 20),
                               decoration: BoxDecoration(
                                   color: Colors.grey.shade200,
                                   borderRadius: BorderRadius.circular(10)),

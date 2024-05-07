@@ -318,7 +318,9 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       Task task = Task.fromMap(tasks[index]);
                       if (searchStr.isNotEmpty &&
-                          task.task.toLowerCase().contains(searchStr)) {
+                          task.task
+                              .toLowerCase()
+                              .contains(searchStr.toLowerCase())) {
                         return Column(
                           children: [
                             Container(
@@ -381,8 +383,10 @@ class _HomePageState extends State<HomePage> {
                           ],
                         );
                       } else if (searchStr.isNotEmpty &&
-                          !task.task.toLowerCase().contains(searchStr)) {
-                        return Text("No Tasks found $searchStr");
+                          !task.task
+                              .toLowerCase()
+                              .contains(searchStr.toLowerCase())) {
+                        return const SizedBox();
                       } else {
                         return Column(
                           children: [
