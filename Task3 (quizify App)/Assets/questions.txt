@@ -1,0 +1,159 @@
+Question: What is the purpose of the GlobalKey in Flutter?
+
+A) It uniquely identifies a widget in the widget tree.
+B) It manages the global state of the application.
+C) It helps in managing the routing and navigation of the app.
+D) It facilitates communication between parent and child widgets.
+Answer: A) It uniquely identifies a widget in the widget tree.
+
+Question: Which method is used to animate the transition between two routes in Flutter?
+
+A) animateToPage()
+B) animateTo()
+C) navigateWithAnimation()
+D) Navigator.push()
+Answer: D) Navigator.push()
+
+Question: What is the purpose of the didUpdateWidget method in a StatefulWidget?
+
+A) It is called when the widget is first inserted into the tree.
+B) It is called when the dependencies of the widget change.
+C) It is called when the widget's state changes.
+D) It is called when the widget is rebuilt with a new instance of its configuration.
+Answer: D) It is called when the widget is rebuilt with a new instance of its configuration.
+
+Question: What is the primary function of the SingleChildScrollView widget in Flutter?
+
+A) It allows you to scroll a single child widget in both horizontal and vertical directions.
+B) It provides a scrolling view for a list of children widgets.
+C) It automatically adjusts the layout of its children based on the available space.
+D) It allows you to create a layout with multiple layers of overlapping widgets.
+Answer: A) It allows you to scroll a single child widget in both horizontal and vertical directions.
+
+Question: What does the term "InheritedWidget" refer to in Flutter?
+
+A) A widget that shares data with its descendants.
+B) A widget that inherits its properties from its parent.
+C) A widget that is automatically disposed of when it goes out of view.
+D) A widget that is immutable and cannot be modified after creation.
+Answer: A) A widget that shares data with its descendants.
+
+Question: What is the purpose of the CrossAxisAlignment property in Flutter's Column widget?
+
+A) It specifies the alignment of children along the main axis of the column.
+B) It specifies the alignment of children along the cross axis of the column.
+C) It determines whether children should be aligned at the start or end of the column.
+D) It determines the spacing between children in the column.
+Answer: B) It specifies the alignment of children along the cross axis of the column.
+
+Question: Which widget is used to create a circular progress indicator in Flutter?
+
+A) CircularProgressIndicator
+B) CircularProgressBar
+C) CircularLoader
+D) CircularProgress
+Answer: A) CircularProgressIndicator
+
+Question: What is the purpose of the ValueNotifier class in Flutter?
+
+A) It is used to store key-value pairs that can be accessed throughout the app.
+B) It is used to create animations and transitions between different widget states.
+C) It is used to manage the state of a widget and automatically rebuild it when the state changes.
+D) It is used to listen for changes to a value and rebuild the widget tree when the value changes.
+Answer: D) It is used to listen for changes to a value and rebuild the widget tree when the value changes.
+
+Question: Which method is used to add a listener to a ValueNotifier in Flutter?
+
+A) addListener()
+B) addObserver()
+C) listen()
+D) attachListener()
+Answer: A) addListener()
+
+Question: What is the purpose of the FractionallySizedBox widget in Flutter?
+
+A) It allows you to specify the size of a widget as a fraction of its parent's size.
+B) It creates a box with a fixed width and height.
+C) It aligns its child within its own bounds based on a fraction value.
+D) It divides the available space among its children widgets based on a fraction value.
+Answer: A) It allows you to specify the size of a widget as a fraction of its parent's size.
+
+Question: Which widget is used to display images in Flutter?
+
+A) ImageWidget
+B) ImageView
+C) Image
+D) Picture
+Answer: C) Image
+
+Question: What is the purpose of the IndexedStack widget in Flutter?
+
+A) It creates a stack of widgets where only one widget is visible at a time, based on its index.
+B) It displays a list of items in a scrollable column layout.
+C) It arranges its children in a horizontal line.
+D) It aligns its child within its own bounds based on a fraction value.
+Answer: A) It creates a stack of widgets where only one widget is visible at a time, based on its index.
+
+Question: What is the purpose of the FadeTransition widget in Flutter?
+
+A) It animates the opacity of its child widget.
+B) It creates a transition effect between two routes.
+C) It fades in/out a child widget when it is added/removed from the widget tree.
+D) It applies a fade effect to the background of a widget.
+Answer: A) It animates the opacity of its child widget.
+
+Question: Which property of the Transform widget is used to specify the angle of rotation?
+
+A) scale
+B) translate
+C) rotate
+D) angle
+Answer: C) rotate
+
+Question: What is the purpose of the ClipRRect widget in Flutter?
+
+A) It clips its child to the shape of a rectangle with rounded corners.
+B) It clips its child to the shape of a circle.
+C) It clips its child to the shape of a custom path.
+D) It clips its child to the shape of an oval.
+Answer: A) It clips its child to the shape of a rectangle with rounded corners.
+
+Question: What is the purpose of the SliverAppBar widget in Flutter?
+
+A) It creates an app bar with collapsible behavior.
+B) It creates a scrollable list of items.
+C) It provides a customizable bottom navigation bar.
+D) It creates a toolbar with actions and a title.
+Answer: A) It creates an app bar with collapsible behavior.
+
+Question: Which widget is used to create a material design "floating action button" in Flutter?
+
+A) FloatingActionButton
+B) FloatButton
+C) ActionButton
+D) FabButton
+Answer: A) FloatingActionButton
+
+Question: What is the purpose of the Dismissible widget in Flutter?
+
+A) It creates a widget that can be dragged and dropped within a parent container.
+B) It dismisses a widget from the screen when swiped in a particular direction.
+C) It provides a way to dismiss the keyboard when tapping outside of a text field.
+D) It disables the interaction with its child widget.
+Answer: B) It dismisses a widget from the screen when swiped in a particular direction.
+
+Question: What is the purpose of the AnimatedSwitcher widget in Flutter?
+
+A) It animates the transition between two routes.
+B) It animates changes in the position of its children.
+C) It animates changes in the visibility of its children.
+D) It animates changes in the size of its children.
+Answer: C) It animates changes in the visibility of its children.
+
+Question: What is the purpose of the CustomPainter class in Flutter?
+
+A) It allows you to customize the appearance of a widget using a custom paint function.
+B) It provides a way to define custom animation curves.
+C) It allows you to define custom shapes for use in the layout.
+D) It facilitates communication between parent and child widgets.
+Answer: A) It allows you to customize the appearance of a widget using a custom paint function.
